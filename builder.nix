@@ -23,19 +23,19 @@ in
     git
     ninja
     west
-  ];
+  ] ++ (args.nativeBuildInputs or []);
 
-  westDeps = fetchZephyrDeps ({
+  westDeps = args.westDeps or (fetchZephyrDeps ({
     name = "${finalAttrs.finalPackage.name}-west-deps";
     hash = westHash;
-  } // lib.filterAttrs (name: _: lib.elem name [ "westRoot" "westOutputs" "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs);
+  } // lib.filterAttrs (name: _: lib.elem name [ "westRoot" "westOutputs" "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs));
 
   env = {
     ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
     GNUARMEMB_TOOLCHAIN_PATH = gcc-arm-embedded;
-  };
+  } // (args.env or {});
 
-  configurePhase = ''
+  configurePhase = args.configurePhase or ''
     runHook preConfigure
 
     for output in $westDeps/.west $westDeps/*; do
@@ -58,7 +58,7 @@ in
     runHook postConfigure
   '';
 
-  buildPhase = ''
+  buildPhase = args.buildPhase or ''
     runHook preBuild
 
     west build "''${westBuildFlagsArray[@]}"
@@ -66,7 +66,7 @@ in
     runHook postBuild
   '';
 
-  installPhase = ''
+  installPhase = args.installPhase or ''
     runHook preInstall
 
     mkdir $out
