@@ -22,5 +22,5 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: zmk_firmware.zip
+          name: zmk_firmware
           path: result
