@@ -19,7 +19,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v8
 
       - id: update-flake-lock
-        uses: DeterminateSystems/update-flake-lock@v19
+        uses: DeterminateSystems/update-flake-lock@v20
         with:
           commit-msg: 'flake: update inputs'
           pr-title: 'flake: update inputs'
