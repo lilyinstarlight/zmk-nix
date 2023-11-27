@@ -24,10 +24,13 @@ let
       "-DSHIELD=sofle_rgb_keyhive_${side} nice_view_adapter nice_view"
     ];
   };
-in (runCommand "zmk-config" {} ''
+in (runCommand "zmk-config" {
+  left = buildSofle "left";
+  right = buildSofle "right";
+} ''
   mkdir $out
-  ln -s ${buildSofle "left"}/zmk.uf2 $out/zmk_left.uf2
-  ln -s ${buildSofle "right"}/zmk.uf2 $out/zmk_right.uf2
+  ln -s $left/zmk.uf2 $out/zmk_left.uf2
+  ln -s $right/zmk.uf2 $out/zmk_right.uf2
 '') // {
   meta = with lib; {
     description = "Keyboard firmware for Sofle RGB, Keyhive variant with nice!view screens";
