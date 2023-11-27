@@ -70,7 +70,7 @@ in
     runHook preInstall
 
     mkdir $out
-    mv build/zephyr/*.uf2 $out/
+    cp build/*/*.uf2 $out/
 
     runHook postInstall
   '';
