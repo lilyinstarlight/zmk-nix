@@ -1,0 +1,38 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: lily
+      url-base: https://github.com/lilyinstarlight
+  projects:
+    - name: zephyr
+      remote: zmkfirmware
+      revision: 9b9cf36a81228159822ee726929ed49b5d9e38a9  # v3.2.0+zmk-fixes
+      clone-depth: 1
+      import:
+        name-blocklist:
+          - ci-tools
+          - hal_altera
+          - hal_cypress
+          - hal_infineon
+          - hal_microchip
+          - hal_nxp
+          - hal_openisa
+          - hal_silabs
+          - hal_xtensa
+          - hal_st
+          - hal_ti
+          - loramac-node
+          - mcuboot
+          - mcumgr
+          - net-tools
+          - openthread
+          - edtt
+          - trusted-firmware-m
+          - sof
+    - name: zmk
+      remote: lily
+      revision: a047e03aa0d75c5355f8b9029f27b953ef9a9f8e  # feature/sofle_rgb_keyhive
+      import: app/west.yml
+  self:
+    path: config
