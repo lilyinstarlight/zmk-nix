@@ -119,7 +119,9 @@ in
         else:
             os.remove(real_git)
   '';
-in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "westOutputs" "hash" ]) // {
+in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
+  inherit name westRoot westOutputs;
+
   nativeBuildInputs = [
     make-fake-west-git
     git

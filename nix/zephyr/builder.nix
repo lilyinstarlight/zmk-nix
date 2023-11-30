@@ -13,11 +13,12 @@ let
 in
 
 {
-  westHash ? "",
-  westRoot ? ".",
+  zephyrDepsHash ? "",
   westBuildFlags ? [],
   ...
-} @ args: stdenv.mkDerivation (finalAttrs: (lib.attrsets.removeAttrs args [ "westHash" ]) // {
+} @ args: stdenv.mkDerivation (finalAttrs: (lib.attrsets.removeAttrs args [ "zephyrDepsHash" "westRoot" "westOutputs" ]) // {
+  inherit westBuildFlags;
+
   nativeBuildInputs = [
     cmake
     git
@@ -27,8 +28,10 @@ in
 
   westDeps = args.westDeps or (fetchZephyrDeps ({
     name = "${finalAttrs.finalPackage.name}-west-deps";
-    hash = westHash;
-  } // lib.filterAttrs (name: _: lib.elem name [ "westRoot" "westOutputs" "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs));
+    hash = zephyrDepsHash;
+  }
+  // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" "westOutputs" ]) args)
+  // (lib.filterAttrs (name: _: lib.elem name [ "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs)));
 
   env = {
     ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
