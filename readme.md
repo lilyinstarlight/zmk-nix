@@ -1,3 +1,5 @@
-# zmk-config
+# zmk-nix
 
-Configuration files and build system for generating ZMK firmware to use on my Sofle RGB (Keyhive variant)
+Build system and configuration files for generating and building ZMK firmware to use on my Sofle RGB (Keyhive variant)
+
+I might even document it one day!
