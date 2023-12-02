@@ -9,12 +9,17 @@
 , parts ? [ "left" "right" ]
 , ... } @ args:
 
-runCommand name ({
-  inherit parts;
+let
+  westDeps = (buildKeyboard ((lib.attrsets.removeAttrs args [ "parts" ]) // {
+    inherit name;
+  })).westDeps;
+in runCommand name ({
+  inherit parts westDeps;
 } // args // (lib.genAttrs parts (part:
   buildKeyboard ((lib.attrsets.removeAttrs args [ "shield" "parts" ]) // {
-    name = "${name}-part";
+    name = "${name}-${part}";
     shield = lib.replaceStrings [ "%PART%" ] [ part ] shield;
+    westDeps = args.westDeps or westDeps;
   })
 ))) ''
   mkdir $out
