@@ -4,6 +4,7 @@
 , git
 , python3
 , writers
+, yq
 }:
 
 let
@@ -14,7 +15,6 @@ in
   name ? "zephyr-deps",
   hash ? "",
   westRoot ? ".",
-  westOutputs ? [ "modules" "zephyr" ],
   ...
 } @ args: let
   hash_ = if hash != "" then {
@@ -115,17 +115,18 @@ in
                             os.path.join(fake_git, 'HEAD'))
 
             shutil.rmtree(real_git)
-            os.rename(fake_git, real_git)
+            shutil.move(fake_git, real_git)
         else:
             os.remove(real_git)
   '';
 in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
-  inherit name westRoot westOutputs;
+  inherit name westRoot;
 
   nativeBuildInputs = [
     make-fake-west-git
     git
     west
+    yq
   ];
 
   env.GIT_SSL_CAINFO = "${cacert}/etc/ssl/certs/ca-bundle.crt";
@@ -151,10 +152,10 @@ in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
   installPhase = ''
     runHook preInstall
 
-    find . -name .git -print0 | xargs -0 -n1 make-fake-west-git
-
     mkdir $out
-    mv -- .west ${lib.escapeShellArgs westOutputs} $out/
+    west manifest --resolve | yq -j '.manifest.projects | map(if .path then (.path | split("/"))[0] else .name end) | unique [] + "\u0000"' | xargs -0 mv -t $out -- .west
+
+    find $out -name .git -print0 | xargs -0 -n1 make-fake-west-git
 
     runHook postInstall
   '';

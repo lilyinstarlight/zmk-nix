@@ -16,7 +16,7 @@ in
   zephyrDepsHash ? "",
   westBuildFlags ? [],
   ...
-} @ args: stdenv.mkDerivation (finalAttrs: (lib.attrsets.removeAttrs args [ "zephyrDepsHash" "westRoot" "westOutputs" ]) // {
+} @ args: stdenv.mkDerivation (finalAttrs: (lib.attrsets.removeAttrs args [ "zephyrDepsHash" "westRoot" ]) // {
   inherit westBuildFlags;
 
   nativeBuildInputs = [
@@ -30,8 +30,10 @@ in
     name = "${finalAttrs.finalPackage.name}-west-deps";
     hash = zephyrDepsHash;
   }
-  // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" "westOutputs" ]) args)
+  // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" ]) args)
   // (lib.filterAttrs (name: _: lib.elem name [ "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs)));
+
+  passthru = { inherit (finalAttrs.westDeps) westRoot; };
 
   env = {
     ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";

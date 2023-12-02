@@ -10,9 +10,8 @@
 , name ? "zmk"
 , config ? "config"
 , extraCmakeFlags ? []
-, westOutputs ? [ "modules" "zephyr" "zmk" ]
 , ... } @ args: buildZephyrPackage ((lib.attrsets.removeAttrs args [ "config" "extraCmakeFlags" ]) // {
-  inherit name westOutputs;
+  inherit name;
 
   westRoot = config;
 
