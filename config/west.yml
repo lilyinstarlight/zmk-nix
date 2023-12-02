@@ -7,8 +7,7 @@ manifest:
   projects:
     - name: zephyr
       remote: zmkfirmware
-      revision: 9b9cf36a81228159822ee726929ed49b5d9e38a9  # v3.2.0+zmk-fixes
-      clone-depth: 1
+      revision: 1ae0eb5ce8adafcec993e6fb8f4eeb6f818a7772  # v3.2.0+zmk-fixes
       import:
         name-blocklist:
           - ci-tools
@@ -32,7 +31,7 @@ manifest:
           - sof
     - name: zmk
       remote: lily
-      revision: a047e03aa0d75c5355f8b9029f27b953ef9a9f8e  # feature/sofle_rgb_keyhive
+      revision: 7e4ec441900702cc68a0c7be0a5cd1ea7109ec4d  # feature/sofle_rgb_keyhive
       import: app/west.yml
   self:
     path: config
