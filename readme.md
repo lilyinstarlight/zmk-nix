@@ -16,7 +16,7 @@ The `fetchZephyrDeps` function takes the following arguments and fetches the dep
 
 ### `buildZephyrPackage`
 
-The `buildZephyrPackage` function takes the following arguments and builds the Zephyr RTOS into .uf2 firmware files using the `west` tooling and a provided `west` manifest:
+The `buildZephyrPackage` function takes the following arguments and builds the Zephyr RTOS into `.uf2` firmware files using the `west` tooling and a provided `west.yml` manifest:
 
 * `src` - source tree to build in, which includes your west manifest
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
@@ -36,7 +36,7 @@ The `buildKeyboard` function takes the following arguments and performs a ZMK bu
 * `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
 
 
-### `buildSplitKeyboard
+### `buildSplitKeyboard`
 
 The `buildSplitKeyboard` function takes the following arguments and outputs a directory with multiple `.uf2` files, one for each keyboard part:
 
