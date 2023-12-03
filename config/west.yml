@@ -31,7 +31,7 @@ manifest:
           - sof
     - name: zmk
       remote: lily
-      revision: 9c2beeb3071b91e2134409fc45bb8a52570f29ae  # feature/sofle_rgb_keyhive
+      revision: d1bc735b2bb47ac11567489c6ed1eca9f8f37cfc  # feature/sofle_rgb_keyhive
       import: app/west.yml
   self:
     path: config
