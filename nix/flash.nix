@@ -46,7 +46,7 @@ writeShellApplication {
   '';
 
   meta = with lib; {
-    description = "Keyboard ZMK firmware flasher";
+    description = "ZMK firmware flasher";
     license = licenses.mit;
     platforms = platforms.all;
     maintainers = with maintainers; [ lilyinstarlight ];
