@@ -153,7 +153,7 @@ in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
     runHook preInstall
 
     mkdir $out
-    west manifest --resolve | yq -j '.manifest.projects | map(if .path then (.path | split("/"))[0] else .name end) | unique [] + "\u0000"' | xargs -0 mv -t $out -- .west
+    west list -f '- {{name: {name!r}, path: {path!r}}}' | yq -j '. | map(select(.name != "manifest") | .path | split("/")[0]) | unique [] + "\u0000"' | xargs -0 mv -t $out -- .west
 
     find $out -name .git -print0 | xargs -0 -n1 make-fake-west-git
 
