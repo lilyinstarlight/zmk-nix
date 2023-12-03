@@ -27,6 +27,7 @@ jobs:
           delete-branch: true
           committer: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
           author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+          commit-message: 'config,nix: update deps'
           title: 'config,nix: update deps'
           labels: 'dependencies'
           body: |
