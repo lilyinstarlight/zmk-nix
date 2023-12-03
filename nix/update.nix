@@ -23,7 +23,7 @@ writeShellApplication {
     # get package attr and path
     attr="firmware"
     pkgpath="$(nix eval --raw "$toplevel"#"$attr".meta.position | cut -d: -f1)"
-    outpath="$(nix eval --raw --impure --expr "builtins.fetchGit \"$toplevel\"")"
+    outpath="$(nix eval --raw --impure --expr "builtins.fetchGit { url = \"$toplevel\"; shallow = true; }")"
     [ -n "$outpath" ] && pkgpath="''${pkgpath/$outpath/$toplevel}"
 
     # get manifest revision heads and update
