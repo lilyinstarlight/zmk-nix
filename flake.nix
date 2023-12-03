@@ -19,6 +19,8 @@
       flash = pkgs.callPackage ./nix/flash.nix {
         inherit firmware;
       };
+
+      update = pkgs.callPackage ./nix/update.nix {};
     });
 
     legacyPackages = forAllSystems (system: self.lib.buildersFor nixpkgs.legacyPackages.${system});
