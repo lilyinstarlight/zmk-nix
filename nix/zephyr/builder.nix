@@ -49,14 +49,14 @@ in
 
     declare -ag westBuildFlagsArray=(${lib.escapeShellArgs finalAttrs.westBuildFlags})
 
-    if [ -d zephyr ]; then
-      export CMAKE_PREFIX_PATH="$(pwd)/zephyr/share/zephyr-package/cmake:$CMAKE_PREFIX_PATH"
+    if zephyrCmake="$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -print -quit)"; then
+      export CMAKE_PREFIX_PATH="$zephyrCmake''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 
       if [ -z "$dontAddZephyrVersion" ]; then
         if (for item in "''${westBuildFlagsArray[@]}"; do [ "$item" = '--' ] && exit 1; done); then
           westBuildFlagsArray+=('--')
         fi
-        westBuildFlagsArray+=("-DBUILD_VERSION=$(<zephyr/.git/HEAD)")
+        westBuildFlagsArray+=("-DBUILD_VERSION=$(<"''${zephyrCmake%/share/zephyr-package/cmake}/.git/HEAD)")
       fi
     fi
 
@@ -66,7 +66,7 @@ in
   buildPhase = args.buildPhase or ''
     runHook preBuild
 
-    west build "''${westBuildFlagsArray[@]}"
+    TERM=dumb west build "''${westBuildFlagsArray[@]}"
 
     runHook postBuild
   '';
@@ -79,4 +79,6 @@ in
 
     runHook postInstall
   '';
+
+  dontUseNinjaCheck = true;
 })
