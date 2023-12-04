@@ -41,44 +41,38 @@ in
   } // (args.env or {});
 
   configurePhase = args.configurePhase or ''
-    runHook preConfigure
-
     for output in $westDeps/.west $westDeps/*; do
       cp --no-preserve=mode -rt . "$output"
     done
 
     declare -ag westBuildFlagsArray=(${lib.escapeShellArgs finalAttrs.westBuildFlags})
 
-    if zephyrCmake="$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -print -quit)"; then
-      export CMAKE_PREFIX_PATH="$zephyrCmake''${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+    if zephyrRoot="$(dirname "$(dirname "$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -printf '%h' -quit)")")"; then
+      addCMakeParams "$zephyrRoot"
 
       if [ -z "$dontAddZephyrVersion" ]; then
         if (for item in "''${westBuildFlagsArray[@]}"; do [ "$item" = '--' ] && exit 1; done); then
           westBuildFlagsArray+=('--')
         fi
-        westBuildFlagsArray+=("-DBUILD_VERSION=$(<"''${zephyrCmake%/share/zephyr-package/cmake}/.git/HEAD)")
+        westBuildFlagsArray+=("-DBUILD_VERSION=$(<"$zephyrRoot"/.git/HEAD)")
       fi
     fi
 
+    runHook preConfigure
+
+    west build -d "''${cmakeBuildDir:=build}" --cmake-only "''${westBuildFlagsArray[@]}"
+
+    cd "$cmakeBuildDir"
+
     runHook postConfigure
-  '';
-
-  buildPhase = args.buildPhase or ''
-    runHook preBuild
-
-    TERM=dumb west build "''${westBuildFlagsArray[@]}"
-
-    runHook postBuild
   '';
 
   installPhase = args.installPhase or ''
     runHook preInstall
 
     mkdir $out
-    cp build/*/*.uf2 $out/
+    cp */*.uf2 $out/
 
     runHook postInstall
   '';
-
-  dontUseNinjaCheck = true;
 })
