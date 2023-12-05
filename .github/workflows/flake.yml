@@ -19,7 +19,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v9
 
       - id: update-flake-lock
-        uses: lilyinstarlight/update-flake-lock@feature/all-create-pr-outputs
+        uses: DeterminateSystems/update-flake-lock@v20
         with:
           commit-msg: 'flake: update inputs'
           pr-title: 'flake: update inputs'
@@ -29,4 +29,4 @@ jobs:
         if: ${{ contains(fromJSON('["created", "updated"]'), steps.update-flake-lock.outputs.pull-request-operation) }}
         with:
           workflow: ci.yml
-          ref: ${{ steps.update-flake-lock.outputs.pull-request-head-sha }}
+          ref: refs/heads/update_flake_lock_action
