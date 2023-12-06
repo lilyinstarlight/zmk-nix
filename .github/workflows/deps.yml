@@ -33,7 +33,7 @@ jobs:
           body: |
             Automated bump of ZMK dependencies
 
-      - uses: benc-uk/workflow-dispatch@v1
+      - uses: benc-uk/workflow-dispatch@v121
         if: ${{ contains(fromJSON('["created", "updated"]'), steps.create-pr.outputs.pull-request-operation) }}
         with:
           workflow: ci.yml
