@@ -2,8 +2,6 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: lily
-      url-base: https://github.com/lilyinstarlight
   projects:
     - name: zephyr
       remote: zmkfirmware
@@ -30,8 +28,8 @@ manifest:
           - trusted-firmware-m
           - sof
     - name: zmk
-      remote: lily
-      revision: b551117c76c9f0daca298dddf5b26c21e46d872b  # feature/sofle_rgb_keyhive
+      remote: zmkfirmware
+      revision: 384637ae6c8073ef7e5ac87db111c8aaab972015  # main
       import: app/west.yml
   self:
     path: config
