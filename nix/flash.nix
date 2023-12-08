@@ -13,7 +13,7 @@ writeShellApplication {
 
   text = ''
     available() {
-      lsblk -Sno path,model | grep -F TODO | cut -d' ' -f1
+      lsblk -Sno path,model | grep -F 'nRF UF2' | cut -d' ' -f1
     }
 
     mounted() {
