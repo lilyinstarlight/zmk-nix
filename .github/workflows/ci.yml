@@ -20,7 +20,7 @@ jobs:
 
       - run: nix -vL --show-trace build
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: zmk_firmware
           path: result
