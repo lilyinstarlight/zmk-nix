@@ -5,7 +5,7 @@
 }:
 
 writeShellApplication {
-  name = "flash";
+  name = "zmk-uf2-flash";
 
   runtimeInputs = [
     util-linux
@@ -20,8 +20,25 @@ writeShellApplication {
       findmnt "$device" -no target
     }
 
-    # shellcheck disable=SC2043
-    for part in ${toString firmware.parts or ''""''}; do
+    flash=("$@")
+    parts=(${toString firmware.parts or ""})
+
+    if [ "''${#flash[@]}" -eq 0 ]; then
+      if [ "''${#parts[@]}" -eq 0 ]; then
+        flash=("")
+      else
+        flash=("''${parts[@]}")
+      fi
+    else
+      for part in "''${flash[@]}"; do
+        if ! printf '%s\0' "''${parts[@]}" | grep -Fxqz -- "$part"; then
+          echo "The '$part' part does not exist in the firmware '"'${firmware.name}'"'"
+          exit 1
+        fi
+      done
+    fi
+
+    for part in "''${flash[@]}"; do
       echo -n "Double tap reset and plug in$([ -n "$part" ] && echo " the '$part' part of") the keyboard via USB"
       while ! device="$(available)"; do
         echo -n .
@@ -46,9 +63,9 @@ writeShellApplication {
   '';
 
   meta = with lib; {
-    description = "ZMK firmware flasher";
+    description = "ZMK UF2 firmware flasher";
     license = licenses.mit;
-    platforms = platforms.all;
+    platforms = platforms.linux;
     maintainers = with maintainers; [ lilyinstarlight ];
   };
 }
