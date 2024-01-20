@@ -10,7 +10,7 @@
 }:
 
 writeShellApplication {
-  name = "sofle-firmware-update";
+  name = "zmk-firmware-update";
 
   runtimeInputs = [
     coreutils
