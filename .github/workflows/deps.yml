@@ -21,7 +21,7 @@ jobs:
       - run: nix -vL run --show-trace .#update
 
       - id: create-pr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: update_zmk_config_deps
           delete-branch: true
