@@ -41,7 +41,7 @@ The `buildKeyboard` function takes the following arguments and performs a ZMK bu
 The `buildSplitKeyboard` function takes the following arguments and outputs a directory with multiple `.uf2` files, one for each keyboard part:
 
 * `board` - ZMK board value
-* `shield` - ZMK shield value, the special string `%PART` will be replaced in each `buildKeyboard` invocation to match the part being built for
+* `shield` - ZMK shield value, the special string `%PART%` will be replaced in each `buildKeyboard` invocation to match the part being built for
 * `parts` - enumeration of parts to the keyboard that matches the shield naming, default is `[ "left" "right" ]`
 * `src` - source tree to build in, which includes your west manifest and configuration files
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
