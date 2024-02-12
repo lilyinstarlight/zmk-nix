@@ -1,0 +1,40 @@
+name: Dependencies
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v9
+
+      - run: nix -vL run --show-trace .#update
+
+      - id: create-pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update_zmk_config_deps
+          delete-branch: true
+          committer: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+          author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+          commit-message: 'config,nix: update deps'
+          title: 'config,nix: update deps'
+          labels: 'dependencies'
+          body: |
+            Automated bump of ZMK dependencies
+
+      - uses: benc-uk/workflow-dispatch@v121
+        if: ${{ contains(fromJSON('["created", "updated"]'), steps.create-pr.outputs.pull-request-operation) }}
+        with:
+          workflow: ci.yml
+          ref: refs/heads/update_zmk_config_deps

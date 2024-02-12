@@ -1,6 +1,39 @@
 # zmk-nix
 
-Build system and configuration files for generating and building ZMK firmware to use on my Sofle RGB
+Build system and configuration files for generating and building ZMK firmware
+
+I've included my personal configuration for my Sofle RGB in this repository, but the Nix flake provides generalized builders that can be used from downstream flakes.
+
+
+## Usage
+
+### Nix Flakes
+
+Use the default flake template to create a fully working downstream repository that uses the zmk-nix flake to build your own ZMK config.
+
+```sh
+$ mkdir zmk-config && cd zmk-config
+$ git init
+$ nix flake init --template github:lilyinstarlight/zmk-nix
+$ nix flake lock
+$ git add .
+```
+
+Follow the welcome text below that is printed when initializing from the template for using this new repository:
+
+> #### Getting started
+> 
+> - Change `buildSplitKeyboard` to `buildKeyboard` in `flake.nix` if not using a split keyboard
+> - Edit for the desired ZMK board and shield(s) in `flake.nix`
+> - Create and edit `config/<shield>.conf` and `config/<shield>.keymap` to your liking
+> - Run `nix run .#flash` to flash firmware
+> 
+> 
+> #### Maintenance
+> 
+> - Run `nix run .#update` to update West dependencies, including ZMK version, and bump the `zephyrDepsHash` on the derivation
+> - GitHub Actions to automatically PR flake lockfile bumps and West dependency bumps are included
+> - Using something like Mergify to automatically merge these PRs is recommended - see <https://github.com/lilyinstarlight/zmk-nix/blob/main/.github/mergify.yml> for an example Mergify configuration
 
 
 ## Builders
@@ -59,3 +92,8 @@ My Sofle RGB's firmware, built with the configuration I have in this repository.
 ## `flash`
 
 A flashing script that automatically handles prompting and copying `.uf2` firmware files to the controllers.
+
+
+## `update`
+
+A updater script that automatically bumps West dependencies and bumps the `zephyrDepsHash` value for the `.#firmware` derivation in the current directory.

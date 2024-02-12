@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v9
+
+      - run: nix -vL --show-trace flake check
+
+      - run: nix -vL --show-trace build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zmk_firmware
+          path: result

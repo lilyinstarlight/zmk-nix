@@ -1,0 +1,34 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+  projects:
+    - name: zephyr
+      remote: zmkfirmware
+      revision: 339570e2393b108bf8f9241018ecaf5615c25469  # v3.5.0+zmk-fixes
+      import:
+        name-blocklist:
+          - ci-tools
+          - hal_altera
+          - hal_cypress
+          - hal_infineon
+          - hal_microchip
+          - hal_nxp
+          - hal_openisa
+          - hal_silabs
+          - hal_xtensa
+          - hal_st
+          - hal_ti
+          - loramac-node
+          - mcuboot
+          - mcumgr
+          - net-tools
+          - openthread
+          - edtt
+          - trusted-firmware-m
+    - name: zmk
+      remote: zmkfirmware
+      revision: 40adb3858df5509bd6c67b0477e8832fe769a507  # main
+      import: app/west.yml
+  self:
+    path: config
