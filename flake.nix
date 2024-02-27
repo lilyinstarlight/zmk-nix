@@ -26,7 +26,7 @@
     legacyPackages = forAllSystems (system: self.lib.buildersFor nixpkgs.legacyPackages.${system});
 
     overlays = {
-      default = final: prev: self.lib.buildersFor final;
+      default = final: prev: self.lib.buildersFor prev;
     };
 
     devShells = forAllSystems (system: let pkgs = nixpkgs.legacyPackages.${system}; in {
