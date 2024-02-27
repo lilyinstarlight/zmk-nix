@@ -5,7 +5,7 @@
     forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
   in {
     lib = {
-      buildersFor = pkgs: pkgs.callPackage ./nix/builders.nix {};
+      buildersFor = pkgs: import ./nix/builders.nix { inherit (pkgs) callPackage; };
     };
 
     packages = forAllSystems (system: let pkgs = nixpkgs.legacyPackages.${system}; in rec {
