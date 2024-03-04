@@ -89,11 +89,11 @@ The `buildSplitKeyboard` function takes the following arguments and outputs a di
 My Sofle RGB's firmware, built with the configuration I have in this repository.
 
 
-## `flash`
+### `flash`
 
 A flashing script that automatically handles prompting and copying `.uf2` firmware files to the controllers.
 
 
-## `update`
+### `update`
 
 A updater script that automatically bumps West dependencies and bumps the `zephyrDepsHash` value for the `.#firmware` derivation in the current directory.
