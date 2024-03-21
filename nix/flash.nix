@@ -58,7 +58,7 @@ writeShellApplication {
       fi
       echo
 
-      cp ${firmware}/*"$([ -n "$part" ] && ehco "_$part")".uf2
+      cp ${firmware}/*"$([ -n "$part" ] && echo "_$part")".uf2 "$mountpoint"
     done
   '';
 
