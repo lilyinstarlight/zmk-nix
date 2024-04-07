@@ -1,7 +1,7 @@
 manifest:
   remotes:
     - name: zmkfirmware
-      url-base: https://github.com/zmkfirmware
+      url-base: https://github.com/petejohanson/
   projects:
     - name: zephyr
       remote: zmkfirmware
@@ -28,7 +28,7 @@ manifest:
           - trusted-firmware-m
     - name: zmk
       remote: zmkfirmware
-      revision: 4bef4e98f52c3ea57630a3cd1e0e2d078d67758b  # main
+      revision: feat/pointers-move-scroll
       import: app/west.yml
   self:
     path: config
