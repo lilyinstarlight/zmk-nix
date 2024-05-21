@@ -19,7 +19,10 @@
     "-s" "zmk/app"
     "-b" board
     "--"
-    "-DZMK_CONFIG=/build/${src.name or "source"}/${config}"
     "-DSHIELD=${shield}"
   ] ++ extraCmakeFlags;
+
+  preConfigure = ''
+    westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
+  '';
 })
