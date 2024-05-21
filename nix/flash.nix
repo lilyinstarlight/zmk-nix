@@ -58,6 +58,19 @@ writeShellApplication {
       echo
 
       cp ${firmware}/*"$([ -n "$part" ] && echo "_$part")".uf2 "$mountpoint"
+
+      echo "Firmware copy complete."
+
+      sleep 1
+
+      if mounted; then
+        echo -n "Please unmount the mass storage device at $device"
+        while mounted; do
+          echo -n .
+          sleep 3
+        done
+      fi
+      echo
     done
   '';
 
