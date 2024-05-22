@@ -17,7 +17,7 @@
       firmware = zmk-nix.legacyPackages.${system}.buildSplitKeyboard {
         name = "firmware";
 
-        src = nixpkgs.lib.sourceFilesBySuffices self [ ".conf" ".keymap" ".yml" ];
+        src = nixpkgs.lib.sourceFilesBySuffices self [ ".conf" ".keymap" ".dtsi" ".yml" ];
 
         board = "nice_nano_v2";
         shield = "lily58_%PART%";
