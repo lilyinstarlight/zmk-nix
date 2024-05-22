@@ -63,9 +63,9 @@ writeShellApplication {
 
       sleep 1
 
-      if mounted; then
-        echo -n "Please unmount the mass storage device at $device"
-        while mounted; do
+      if mounted >/dev/null && available >/dev/null; then
+        echo -n "Please unmount the mass storage device at $device and disconnect$([ -n "$part" ] && echo " the '$part' part of") the keyboard via USB"
+        while mounted >/dev/null && available >/dev/null; do
           echo -n .
           sleep 3
         done
