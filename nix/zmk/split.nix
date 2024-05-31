@@ -5,7 +5,7 @@
 
 { name ? "${args.pname}-${args.version}"
 , board
-, shield
+, shield ? null
 , parts ? [ "left" "right" ]
 , ... } @ args:
 
@@ -19,7 +19,7 @@ in runCommand name ({
   buildKeyboard ((lib.attrsets.removeAttrs args [ "board" "shield" "parts" ]) // {
     name = "${name}-${part}";
     board = lib.replaceStrings [ "%PART%" ] [ part ] board;
-    shield = lib.replaceStrings [ "%PART%" ] [ part ] shield;
+    shield = if shield != null then lib.replaceStrings [ "%PART%" ] [ part ] shield else shield;
     westDeps = args.westDeps or westDeps;
   })
 ))) ''
