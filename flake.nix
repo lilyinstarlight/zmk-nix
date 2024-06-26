@@ -11,6 +11,8 @@
     packages = forAllSystems (system: let pkgs = nixpkgs.legacyPackages.${system}; in rec {
       default = firmware;
 
+      adafruit-nrfutil = pkgs.callPackage ./nix/adafruit-nrfutil.nix {};
+
       firmware = pkgs.callPackage ./nix/firmware.nix {
         inherit self;
         inherit (self.legacyPackages.${system}) buildSplitKeyboard;
