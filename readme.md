@@ -66,6 +66,7 @@ The `buildKeyboard` function takes the following arguments and performs a ZMK bu
 * `src` - source tree to build in, which includes your west manifest and configuration files
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
 * `config` - directory within the source tree that contains your west manifest, defaults to `"config"`
+* `extraWestBuildFlags` - list of extra flags to pass to the ZMK `west build` command, defaults to `[]` (should not include `--` or subsequent CMake flags)
 * `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
 
 
@@ -79,6 +80,7 @@ The `buildSplitKeyboard` function takes the following arguments and outputs a di
 * `src` - source tree to build in, which includes your west manifest and configuration files
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
 * `config` - directory within the source tree that contains your west manifest, defaults to `"config"`
+* `extraWestBuildFlags` - list of extra flags to pass to the ZMK `west build` command, defaults to `[]` (should not include `--` or subsequent CMake flags)
 * `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
 
 
