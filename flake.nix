@@ -20,10 +20,18 @@
         inherit firmware;
       };
 
+      uf2-udev-rules = pkgs.callPackage ./nix/uf2-udev-rules {};
+
       update = pkgs.callPackage ./nix/update.nix {};
     });
 
     legacyPackages = forAllSystems (system: self.lib.buildersFor nixpkgs.legacyPackages.${system});
+
+    nixosModules = {
+      udevRules = ({pkgs, ...}: {
+        services.udev.packages = [ self.packages.${pkgs.system}.uf2-udev-rules ];
+      });
+    };
 
     overlays = {
       default = final: prev: self.lib.buildersFor prev;
