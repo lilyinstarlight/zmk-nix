@@ -1,6 +1,7 @@
 { lib
 , writeShellApplication
 , coreutils
+, systemd
 , util-linux
 , findutils
 , firmware
@@ -12,6 +13,8 @@ writeShellApplication {
   runtimeInputs = [
     coreutils
     findutils
+    # udevadm is from systemd
+    systemd
     util-linux
   ];
 
@@ -30,6 +33,35 @@ writeShellApplication {
       while IFS= read -r device; do
         uf2devices+=("$device")
       done < <(find /dev/mapper -maxdepth 1 -name 'uf2_bootloader_*' -print)
+    }
+
+    function sanityCheckBlockDevice {
+      # If a user yanks the bootloader at a /very/ particular moment when udev is
+      # reloading, it can leave the symlink behind, which could then point to something
+      # that is not the UF2 device.  This refuses to run as root, so the actual write
+      # should fail, but lets do some sanity checking.
+      local blockDevice="$1"
+      local maxDeviceSize=$((256 * 1024 * 1024))
+      local deviceSize
+      local deviceFsType
+      deviceSize="$(udevadm info --query=property --property=ID_FS_SIZE --value "$blockDevice")"
+      deviceFsType="$(udevadm info --query=property --property=ID_FS_TYPE --value "$blockDevice")"
+
+      if [ "$deviceSize" -gt $maxDeviceSize ]; then
+        echo "ERROR: Sanity check of UF2 block device failed, device seems infeasibly"
+        echo "large to actually be a microcontroller."
+        echo
+        echo "Refusing to continue"
+        exit 1
+      fi
+
+      if [ "$deviceFsType" != "vfat" ]; then
+        echo "ERROR: Sanity check of UF2 block device failed, device does not contain"
+        echo "a vfat filesystem, which is expected of UF2 bootloaders."
+        echo
+        echo "Refusing to continue"
+        exit 1
+      fi
     }
 
     banner "UF2 Block Flasher"
@@ -107,6 +139,7 @@ writeShellApplication {
         echo "Unexpected error, multiple firmware files globbed"
         exit 2
       fi
+      sanityCheckBlockDevice "$flashDevice"
       ( set -x ; dd if="''${deviceFirmwareFile[0]}" of="$flashDevice" )
 
       echo "Firmware copy for $part complete."
