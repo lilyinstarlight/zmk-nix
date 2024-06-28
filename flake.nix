@@ -20,6 +20,10 @@
         inherit firmware;
       };
 
+      flashBlock = pkgs.callPackage ./nix/flash-block.nix {
+        inherit firmware;
+      };
+
       uf2-udev-rules = pkgs.callPackage ./nix/uf2-udev-rules {};
 
       update = pkgs.callPackage ./nix/update.nix {};
