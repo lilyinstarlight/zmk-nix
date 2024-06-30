@@ -3,7 +3,7 @@
 
   outputs = { self, nixpkgs }: let
     forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-  in {
+  in rec {
     lib = {
       buildersFor = pkgs: import ./nix/builders.nix { inherit (pkgs) callPackage; };
     };
@@ -30,7 +30,7 @@
     };
 
     devShells = forAllSystems (system: let pkgs = nixpkgs.legacyPackages.${system}; in {
-      default = pkgs.callPackage ./nix/shell.nix {};
+      default = pkgs.callPackage ./nix/shell.nix {extra-pkgs = [packages.${system}.flash];};
     });
 
     templates = {
