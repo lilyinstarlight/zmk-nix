@@ -16,9 +16,16 @@
         inherit (self.legacyPackages.${system}) buildSplitKeyboard;
       };
 
-      flash = pkgs.callPackage ./nix/flash.nix {
-        inherit firmware;
-      };
+      flash =
+        if pkgs.lib.strings.hasSuffix "linux" system
+        then
+          pkgs.callPackage ./nix/flash-linux.nix {
+            inherit firmware;
+          }
+        else
+          pkgs.callPackage ./nix/flash-darwin.nix {
+            inherit firmware;
+          };
 
       update = pkgs.callPackage ./nix/update.nix {};
     });
