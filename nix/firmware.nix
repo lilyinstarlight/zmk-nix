@@ -6,7 +6,7 @@
 buildSplitKeyboard {
   name = "sofle-firmware";
 
-  src = lib.sourceFilesBySuffices self [ ".conf" ".keymap" ".dtsi" ".yml" ];
+  src = lib.sourceFilesBySuffices self [ ".conf" ".keymap" ".dtsi" ".yml" ".shield" ".overlay" ".defconfig" ];
 
   board = "nice_nano_v2";
   shield = "sofle_%PART% nice_view_adapter nice_view";
