@@ -71,6 +71,6 @@ writeShellApplication {
     description = "ZMK config dependency updater";
     license = licenses.mit;
     platforms = platforms.all;
-    maintainers = with maintainers; [ lilyinstarlight ];
+    maintainers = with maintainers; [ /*lilyinstarlight*/ ];
   };
 }

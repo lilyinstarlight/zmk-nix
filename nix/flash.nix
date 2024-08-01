@@ -78,6 +78,6 @@ writeShellApplication {
     description = "ZMK UF2 firmware flasher";
     license = licenses.mit;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ lilyinstarlight ];
+    maintainers = with maintainers; [ /*lilyinstarlight*/ ];
   };
 }

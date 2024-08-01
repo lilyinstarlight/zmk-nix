@@ -17,6 +17,6 @@ buildSplitKeyboard {
     description = "Keyboard firmware for Sofle RGB with nice!view screens";
     license = licenses.mit;
     platforms = platforms.all;
-    maintainers = with maintainers; [ lilyinstarlight ];
+    maintainers = with maintainers; [ /*lilyinstarlight*/ ];
   };
 }
