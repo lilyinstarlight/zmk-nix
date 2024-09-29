@@ -3,6 +3,8 @@
 , ninja
 , gcc-arm-embedded
 , python3
+, extraPackages ? []
+, extraPythonPackages ? (ps: [])
 }:
 
 mkShell {
@@ -23,9 +25,9 @@ mkShell {
       ps.requests
       ps.anytree
       ps.intelhex
-    ]))
+    ] ++ (extraPythonPackages ps)))
     gcc-arm-embedded
-  ];
+  ] ++ extraPackages;
 
   env = {
     ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
