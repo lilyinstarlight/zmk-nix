@@ -3,9 +3,13 @@ manifest:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
   projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: 73ca365530bc79d03dc64d89adc03b4ccbeeb14e  # main
+      import: app/west.yml
     - name: zephyr
       remote: zmkfirmware
-      revision: 339570e2393b108bf8f9241018ecaf5615c25469  # v3.5.0+zmk-fixes
+      revision: c4fd619cc2f18a3946b9552c8a9d9ca538ed5570  # v3.5.0+zmk-fixes
       import:
         name-blocklist:
           - ci-tools
@@ -26,9 +30,5 @@ manifest:
           - openthread
           - edtt
           - trusted-firmware-m
-    - name: zmk
-      remote: zmkfirmware
-      revision: 40adb3858df5509bd6c67b0477e8832fe769a507  # main
-      import: app/west.yml
   self:
     path: config
