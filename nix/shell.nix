@@ -1,7 +1,8 @@
 { mkShell
 , cmake
-, ninja
 , gcc-arm-embedded
+, ninja
+, protobuf
 , python3
 , extraPackages ? []
 , extraPythonPackages ? (ps: [])
@@ -25,8 +26,12 @@ mkShell {
       ps.requests
       ps.anytree
       ps.intelhex
+      # For ZMK Studio builds
+      ps.protobuf
+      ps.grpcio-tools
     ] ++ (extraPythonPackages ps)))
     gcc-arm-embedded
+    protobuf
   ] ++ extraPackages;
 
   env = {
