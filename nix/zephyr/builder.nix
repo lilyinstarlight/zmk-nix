@@ -8,10 +8,6 @@
 , python3
 }:
 
-let
-  west = python3.withPackages (ps: [ ps.west ps.pyelftools ]);
-in
-
 {
   zephyrDepsHash ? "",
   westBuildFlags ? [],
@@ -23,7 +19,8 @@ in
     cmake
     git
     ninja
-    west
+    python3.pythonOnBuildForHost.pkgs.west
+    python3.pythonOnBuildForHost.pkgs.pyelftools
   ] ++ (args.nativeBuildInputs or []);
 
   westDeps = args.westDeps or (fetchZephyrDeps ({
