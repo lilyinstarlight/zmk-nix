@@ -28,7 +28,7 @@ manifest:
           - trusted-firmware-m
     - name: zmk
       remote: zmkfirmware
-      revision: 7f1ee320ab638245bbdae9b1cda5d5c50e2cb16e  # main
+      revision: f0a3947044e82df6778b293a78c07677df4b56e1  # main
       import: app/west.yml
   self:
     path: config
