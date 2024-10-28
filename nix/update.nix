@@ -30,7 +30,7 @@ writeShellApplication {
 
     # get package attr and path
     attr="''${UPDATE_NIX_ATTR_PATH:-firmware}"
-    westRoot="$toplevel/''${UPDATE_WEST_ROOT:-config}"
+    westRoot="$toplevel/''${UPDATE_WEST_ROOT:-$(nix eval --raw "$toplevel"#"$attr" --apply 'drv: drv.westRoot or "config"')}"
     pkgpath="$(nix eval --raw "$toplevel"#"$attr".meta.position | cut -d: -f1)"
     outpath="$(nix eval --raw --impure --expr "builtins.fetchGit { url = \"$toplevel\"; shallow = true; }")"
     [ -n "$outpath" ] && pkgpath="''${pkgpath/$outpath/$toplevel}"
