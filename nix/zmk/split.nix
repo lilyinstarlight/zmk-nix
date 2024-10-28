@@ -14,8 +14,9 @@ let
     inherit name;
   })).westDeps;
 in runCommand name ({
-  inherit parts westDeps;
-} // args // (lib.genAttrs parts (part:
+  inherit board shield parts westDeps;
+  inherit (westDeps) westRoot;
+} // (lib.genAttrs parts (part:
   buildKeyboard ((lib.attrsets.removeAttrs args [ "board" "shield" "parts" ]) // {
     name = "${name}-${part}";
     board = lib.replaceStrings [ "%PART%" ] [ part ] board;
