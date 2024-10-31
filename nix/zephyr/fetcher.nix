@@ -136,7 +136,12 @@ in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
   configurePhase = ''
     runHook preConfigure
 
-    west init -l "$westRoot"
+    mkdir -p .west
+    cat >.west/config <<EOF
+    [manifest]
+    path = $westRoot
+    file = west.yml
+    EOF
 
     runHook postConfigure
   '';
@@ -158,7 +163,7 @@ in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
       | .path
       | split("/")[0])
       | unique [] + "\u0000"
-    ' | xargs -0 mv -t $out -- .west
+    ' | xargs -0 mv -t $out --
 
     find $out -name .git -print0 | xargs -0 -n1 make-fake-west-git
 
