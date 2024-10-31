@@ -32,7 +32,7 @@
     "--"
   ] ++ lib.optional (shield != null) "-DSHIELD=${shield}" ++ extraCmakeFlags;
 
-  preConfigure = ''
+  postPatch = ''
     if [ -e zephyr/module.yml ]; then
       zmkModuleRoot="$(readlink -f .)"
 
@@ -40,7 +40,9 @@
       mkdir -p "$(dirname ${lib.escapeShellArg config})"
       cp --no-preserve=mode -rt "$(dirname ${lib.escapeShellArg config})" "$zmkModuleRoot/"${lib.escapeShellArg config}
     fi
+  '';
 
+  preConfigure = ''
     westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
 
     if [ -n "$zmkModuleRoot" ]; then
