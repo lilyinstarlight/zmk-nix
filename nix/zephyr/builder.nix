@@ -30,7 +30,7 @@
   // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" ]) args)
   // (lib.filterAttrs (name: _: lib.elem name [ "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs)));
 
-  passthru = { inherit (finalAttrs.westDeps) westRoot; };
+  inherit (finalAttrs.westDeps) westRoot;
 
   env = {
     ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
@@ -38,11 +38,18 @@
   } // (args.env or {});
 
   configurePhase = args.configurePhase or ''
-    for output in $westDeps/.west $westDeps/*; do
-      cp --no-preserve=mode -rt . "$output"
-    done
-
     declare -ag westBuildFlagsArray=(${lib.escapeShellArgs finalAttrs.westBuildFlags})
+
+    runHook preConfigure
+
+    cp --no-preserve=mode -rt . "$westDeps"/*
+
+    mkdir -p .west
+    cat >.west/config <<EOF
+    [manifest]
+    path = $westRoot
+    file = west.yml
+    EOF
 
     if zephyrRoot="$(dirname "$(dirname "$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -printf '%h' -quit)")")"; then
       addCMakeParams "$zephyrRoot"
@@ -54,8 +61,6 @@
         westBuildFlagsArray+=("-DBUILD_VERSION=$(<"$zephyrRoot"/.git/HEAD)")
       fi
     fi
-
-    runHook preConfigure
 
     west build -d "''${cmakeBuildDir:=build}" --cmake-only "''${westBuildFlagsArray[@]}"
 
