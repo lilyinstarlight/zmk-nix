@@ -33,11 +33,25 @@
   ] ++ lib.optional (shield != null) "-DSHIELD=${shield}" ++ extraCmakeFlags;
 
   preConfigure = ''
+    if [ -e zephyr/module.yml ]; then
+      zmkModuleRoot="$(readlink -f .)"
+
+      cd "$(mktemp -d)"
+      mkdir -p "$(dirname ${lib.escapeShellArg config})"
+      cp --no-preserve=mode -rt "$(dirname ${lib.escapeShellArg config})" "$zmkModuleRoot/"${lib.escapeShellArg config}
+    fi
+
     westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
+
+    if [ -n "$zmkModuleRoot" ]; then
+      westBuildFlagsArray+=("-DZMK_EXTRA_MODULES=$zmkModuleRoot")
+    elif [ -e boards ]; then
+      westBuildFlagsArray+=("-DBOARD_ROOT=$(readlink -f .)")
+    fi
 
     if [ -d modules/lib/nanopb/generator ]; then
       chmod +x modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
       patchShebangs modules/lib/nanopb/generator
     fi
-  '';
+  '' + (args.preConfigure or "");
 })
