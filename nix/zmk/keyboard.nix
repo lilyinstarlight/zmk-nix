@@ -57,5 +57,5 @@
       chmod +x ../modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
       patchShebangs ../modules/lib/nanopb/generator
     fi
-  '';
+  '' + (args.postConfigure or "");
 })
