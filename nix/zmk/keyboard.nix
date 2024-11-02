@@ -50,10 +50,12 @@
     elif [ -e boards ]; then
       westBuildFlagsArray+=("-DBOARD_ROOT=$(readlink -f .)")
     fi
-
-    if [ -d modules/lib/nanopb/generator ]; then
-      chmod +x modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
-      patchShebangs modules/lib/nanopb/generator
-    fi
   '' + (args.preConfigure or "");
+
+  postConfigure = ''
+    if [ -d ../modules/lib/nanopb/generator ]; then
+      chmod +x ../modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
+      patchShebangs ../modules/lib/nanopb/generator
+    fi
+  '' + (args.postConfigure or "");
 })
