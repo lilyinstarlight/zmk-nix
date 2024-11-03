@@ -21,7 +21,7 @@ in runCommand name ((lib.removeAttrs args [ "zephyrDepsHash" "westDeps" "westRoo
     name = "${name}-${part}";
     board = lib.replaceStrings [ "%PART%" ] [ part ] board;
     shield = if shield != null then lib.replaceStrings [ "%PART%" ] [ part ] shield else shield;
-    westDeps = args.westDeps or westDeps;
+    inherit westDeps;
   })
 ))) ''
   mkdir $out
