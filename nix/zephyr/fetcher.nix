@@ -119,7 +119,7 @@ in
         else:
             os.remove(real_git)
   '';
-in stdenv.mkDerivation ((lib.attrsets.removeAttrs args [ "hash" ]) // {
+in stdenv.mkDerivation ((lib.removeAttrs args [ "hash" ]) // {
   inherit name westRoot;
 
   nativeBuildInputs = [

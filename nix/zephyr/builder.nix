@@ -12,7 +12,7 @@
   zephyrDepsHash ? "",
   westBuildFlags ? [],
   ...
-} @ args: stdenv.mkDerivation (finalAttrs: (lib.attrsets.removeAttrs args [ "zephyrDepsHash" "westRoot" ]) // {
+} @ args: stdenv.mkDerivation (finalAttrs: (lib.removeAttrs args [ "zephyrDepsHash" "westRoot" ]) // {
   inherit westBuildFlags;
 
   nativeBuildInputs = [
