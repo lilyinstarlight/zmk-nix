@@ -10,14 +10,14 @@
 , ... } @ args:
 
 let
-  westDeps = (buildKeyboard ((lib.attrsets.removeAttrs args [ "parts" ]) // {
+  westDeps = args.westDeps or (buildKeyboard ((lib.removeAttrs args [ "parts" ]) // {
     inherit name;
   })).westDeps;
-in runCommand name ({
-  inherit board shield parts westDeps;
+in runCommand name ((lib.removeAttrs args [ "zephyrDepsHash" "westDeps" "westRoot" "config" "enableZmkStudio" "extraWestBuildFlags" "extraCmakeFlags" ]) // {
+  inherit westDeps;
   inherit (westDeps) westRoot;
 } // (lib.genAttrs parts (part:
-  buildKeyboard ((lib.attrsets.removeAttrs args [ "board" "shield" "parts" ]) // {
+  buildKeyboard ((lib.removeAttrs args [ "board" "shield" "parts" ]) // {
     name = "${name}-${part}";
     board = lib.replaceStrings [ "%PART%" ] [ part ] board;
     shield = if shield != null then lib.replaceStrings [ "%PART%" ] [ part ] shield else shield;

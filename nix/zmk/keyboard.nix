@@ -14,7 +14,7 @@
 , extraWestBuildFlags ? []
 , extraCmakeFlags ? []
 , enableZmkStudio ? false
-, ... } @ args: (buildZephyrPackage.override { inherit python3; }) ((lib.attrsets.removeAttrs args [ "config" "extraWestBuildFlags" "extraCmakeFlags" "enableZmkStudio" ]) // {
+, ... } @ args: (buildZephyrPackage.override { inherit python3; }) ((lib.removeAttrs args [ "config" "enableZmkStudio" "extraWestBuildFlags" "extraCmakeFlags" ]) // {
   inherit name;
 
   nativeBuildInputs = lib.optionals enableZmkStudio [
