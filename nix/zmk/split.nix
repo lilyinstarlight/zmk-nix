@@ -14,7 +14,7 @@ let
     inherit name;
   })).westDeps;
 in runCommand name ((lib.removeAttrs args [ "zephyrDepsHash" "westDeps" "westRoot" "config" "enableZmkStudio" "extraWestBuildFlags" "extraCmakeFlags" ]) // {
-  inherit westDeps;
+  inherit board shield parts westDeps;
   inherit (westDeps) westRoot;
 } // (lib.genAttrs parts (part:
   buildKeyboard ((lib.removeAttrs args [ "board" "shield" "parts" ]) // {
