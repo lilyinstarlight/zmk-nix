@@ -40,7 +40,7 @@
       mkdir -p "$(dirname ${lib.escapeShellArg config})"
       cp --no-preserve=mode -rt "$(dirname ${lib.escapeShellArg config})" "$zmkModuleRoot/"${lib.escapeShellArg config}
     fi
-  '';
+  '' + (args.postPatch or "");
 
   preConfigure = ''
     westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
