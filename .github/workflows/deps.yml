@@ -26,7 +26,7 @@ jobs:
 
       - run: cp config/west.yml template/config/west.yml
 
-      - run: sed -i -e 's/zephyrDepsHash\s*=\s*"[^"]*";/'"$(grep -o 'zephyrDepsHash\s*=\s*"[^"]*";' nix/firmware.nix)"'/' template/flake.nix
+      - run: sed -i -e 's|zephyrDepsHash\s*=\s*"[^"]*";|'"$(grep -o 'zephyrDepsHash\s*=\s*"[^"]*";' nix/firmware.nix)"'|' template/flake.nix
 
       - id: create-pr
         uses: peter-evans/create-pull-request@v7
