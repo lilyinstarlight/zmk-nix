@@ -5,11 +5,11 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: 2ded7919ebd63e0174bf5a412f6f01d6af0061c6  # main
+      revision: f8eff2fe34609c91211c25113f9d7db09f7d1689  # main
       import: app/west.yml
     - name: zephyr
       remote: zmkfirmware
-      revision: f8e4d15791602c67405c0fd2651167a895939565  # v3.5.0+zmk-fixes
+      revision: 7a7c0b521f233b6d936ede5d53b8d64b00abc11e  # v3.5.0+zmk-fixes
       import:
         name-blocklist:
           - ci-tools
