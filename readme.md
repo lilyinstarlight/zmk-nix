@@ -86,6 +86,29 @@ The `buildSplitKeyboard` function takes the following arguments and outputs a di
 * `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
 
 
+## Flashers
+
+All flashers take the following arguments.
+
+* `firmware` - Derivation of one of the *builders*.
+
+### `flash` (default)
+
+The `flash` function flashes nRF devices that use an Adafruit bootloader.
+After placing the device into bootloader mode the user is required to mount the vfat filesystem in a manner the user running the flash script is allowed to copy a file to the device.
+
+### `flashBlock`
+
+The `flashBlock` function flashes UF2 bootloaders by directly writing the new firmware to the UF2 to the block device.
+This requires no user interaction after initial UDEV setup, and prevents a mounted filesystem from disappearing.
+This requires a *UDEV Rule*, which can be included in nixos by adding the `zmk-nix.nixosModules.udevRules` to the nixosSystem modules.
+On non-nixos systems, [uf2-block.rules](./nix/uf2-udev-rules/uf2-block.rules) to `/etc/udev/rules.d`.
+The udev rule currently supports:
+
+* Adafruit nRF UF2 bootloaders
+* RP2 bootloaders (RP2040)
+
+
 ## Packages
 
 ### `firmware`
