@@ -22,7 +22,7 @@
         board = "nice_nano_v2";
         shield = "lily58_%PART%";
 
-        zephyrDepsHash = "sha256-CU0JB1Cx8kufoBINj+j45eDu7m07HxTxG9Yx/W9r67g=";
+        zephyrDepsHash = "sha256-Pu9R0CDgRbvVmLmjUKIUunH1PxQU52F+MZoyydiMqpU=";
 
         meta = {
           description = "ZMK firmware";
