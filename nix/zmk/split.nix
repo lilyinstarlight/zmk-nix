@@ -27,5 +27,6 @@ in runCommand name ((lib.removeAttrs args [ "zephyrDepsHash" "westDeps" "westRoo
   mkdir $out
   for part in $parts; do
     ln -s ''${!part}/zmk.uf2 $out/zmk_"$part".uf2
+    ln -s ''${!part}/zmk.hex $out/zmk_"$part".hex
   done
 ''
