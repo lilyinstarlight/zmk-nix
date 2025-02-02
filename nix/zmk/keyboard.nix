@@ -30,8 +30,9 @@
     "-b" board
   ] ++ extraWestBuildFlags ++ lib.optionals enableZmkStudio [ "-S" "studio-rpc-usb-uart" ] ++ [
     "--"
-  ] ++ lib.optional (shield != null) "-DSHIELD=${shield}" ++ extraCmakeFlags;
-
+  ] ++ lib.optional (shield != null) "-DSHIELD=${shield}" 
+    ++ lib.optional enableZmkStudio "-DCONFIG_ZMK_STUDIO=y" 
+    ++ extraCmakeFlags;
   postPatch = ''
     if [ -e zephyr/module.yml ]; then
       zmkModuleRoot="$(readlink -f .)"
