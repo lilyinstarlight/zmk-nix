@@ -7,6 +7,7 @@
 
 { board
 , shield ? null
+, snippets ? []
 , src
 , zephyrDepsHash
 , name ? "zmk"
@@ -28,10 +29,12 @@
   westBuildFlags = [
     "-s" "zmk/app"
     "-b" board
-  ] ++ extraWestBuildFlags ++ lib.optionals enableZmkStudio [ "-S" "studio-rpc-usb-uart" ] ++ [
+  ] ++ lib.optionals enableZmkStudio [ "-S" "studio-rpc-usb-uart" ]
+    ++ lib.concatMap (snippet: [ "-S" snippet ]) snippets
+    ++ extraWestBuildFlags ++ [
     "--"
-  ] ++ lib.optional (shield != null) "-DSHIELD=${shield}" 
-    ++ lib.optional enableZmkStudio "-DCONFIG_ZMK_STUDIO=y" 
+  ] ++ lib.optional (shield != null) "-DSHIELD=${shield}"
+    ++ lib.optional enableZmkStudio "-DCONFIG_ZMK_STUDIO=y"
     ++ extraCmakeFlags;
   postPatch = ''
     if [ -e zephyr/module.yml ]; then
