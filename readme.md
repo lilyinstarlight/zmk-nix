@@ -63,12 +63,13 @@ The `buildKeyboard` function takes the following arguments and performs a ZMK bu
 
 * `board` - ZMK board value
 * `shield` - ZMK shield value
+* `snippets` - ZMK snippets to include (should not include `studio-rpc-usb-uart` since that should be enabled via `enableZmkStudio`)
 * `src` - source tree to build in, which includes your west manifest and configuration files
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
 * `config` - directory within the source tree that contains your west manifest, defaults to `"config"`
 * `enableZmkStudio` - automatically pass in necessary ZMK `west build` flags and add dependencies for building ZMK Studio support
 * `extraWestBuildFlags` - list of extra flags to pass to the ZMK `west build` command, defaults to `[]` (should not include `--` or subsequent CMake flags)
-* `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
+* `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]` (should not include `CONFIG_ZMK_STUDIO` since that should be enabled via `enableZmkStudio`)
 
 
 ### `buildSplitKeyboard`
@@ -77,13 +78,15 @@ The `buildSplitKeyboard` function takes the following arguments and outputs a di
 
 * `board` - ZMK board value
 * `shield` - ZMK shield value, the special string `%PART%` will be replaced in each `buildKeyboard` invocation to match the part being built for
-* `parts` - enumeration of parts to the keyboard that matches the shield naming, default is `[ "left" "right" ]`
+* `snippets` - ZMK snippets to include (should not include `studio-rpc-usb-uart` since that should be enabled via `enableZmkStudio`)
+* `parts` - enumeration of parts to the keyboard that matches the shield naming, defaults to `[ "left" "right" ]`
+* `centralPart` - part of split keyboard to have "central" role (only used to determine which part to pass through `enableZmkStudio` for), defaults to the first element of `parts` (generally should not need to be set)
 * `src` - source tree to build in, which includes your west manifest and configuration files
 * `zephyrDepsHash` - output hash for the `fetchZephyrDeps` fetcher
 * `config` - directory within the source tree that contains your west manifest, defaults to `"config"`
 * `enableZmkStudio` - automatically pass in necessary ZMK `west build` flags and add dependencies for building ZMK Studio support
 * `extraWestBuildFlags` - list of extra flags to pass to the ZMK `west build` command, defaults to `[]` (should not include `--` or subsequent CMake flags)
-* `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]`
+* `extraCmakeFlags` - list of extra CMake flags to pass to the ZMK build, defaults to `[]` (should not include `CONFIG_ZMK_STUDIO` since that should be enabled via `enableZmkStudio`)
 
 
 ## Packages
