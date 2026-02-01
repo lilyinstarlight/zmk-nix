@@ -20,10 +20,22 @@
         inherit firmware;
       };
 
+      flashBlock = pkgs.callPackage ./nix/flash-block.nix {
+        inherit firmware;
+      };
+
+      uf2-udev-rules = pkgs.callPackage ./nix/uf2-udev-rules {};
+
       update = pkgs.callPackage ./nix/update.nix {};
     });
 
     legacyPackages = forAllSystems (system: self.lib.buildersFor nixpkgs.legacyPackages.${system});
+
+    nixosModules = {
+      udevRules = ({pkgs, ...}: {
+        services.udev.packages = [ self.packages.${pkgs.system}.uf2-udev-rules ];
+      });
+    };
 
     overlays = {
       default = final: prev: self.lib.buildersFor prev;
@@ -53,6 +65,11 @@
           - Run `nix run .#update` to update West dependencies, including ZMK version, and bump the `zephyrDepsHash` on the derivation
           - GitHub Actions to automatically PR flake lockfile bumps and West dependency bumps are included
           - Using something like Mergify to automatically merge these PRs is recommended - see <https://github.com/lilyinstarlight/zmk-nix/blob/main/.github/mergify.yml> for an example Mergify configuration
+
+
+          ## Alternative flashers
+
+          - See the readme for alternative flash methods and their use.
         '';
       };
     };
