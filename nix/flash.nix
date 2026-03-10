@@ -45,17 +45,27 @@ writeShellApplication {
         sleep 3
       done
       echo
+      echo "Found device at $device"
 
-      sleep 1
+      # Try to mount via udisks. If it works, we're good and the mountpoint
+      # should be found in the next step. If not, it's either been auto-mounted
+      # before we could which would also work out fine or it cannot be mounted
+      # by udisks which would require the user to intervene manually in any
+      # case.
+      udisks_error="$(udisksctl mount --block-device "$device" 2>&1 || true)"
 
       if ! mountpoint="$(mounted)"; then
+        echo "The device could not be mounted automatically. Running \`udisksctl mount\` produced the following error:"
+        echo "$udisks_error"
+        echo
         echo -n "Please mount the mass storage device at $device so that the firmware file can be copied"
         while ! mountpoint="$(mounted)"; do
           echo -n .
           sleep 3
         done
+        echo
       fi
-      echo
+      echo "Found mountpoint at $mountpoint"
 
       cp ${firmware}/*"$([ -n "$part" ] && echo "_$part")".uf2 "$mountpoint"
 
