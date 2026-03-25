@@ -57,7 +57,7 @@ writeShellApplication {
         # before we could which would also work out fine or it cannot be mounted
         # by udisks which would require the user to intervene manually in any
         # case.
-        udisksctl mount --block-device "$device" >/dev/null 2>&1 || echo -n .
+        udisksctl mount --block-device "$device" >/dev/null 2>&1 && continue || echo -n .
         sleep 1
       done
       echo
