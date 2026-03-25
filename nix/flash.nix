@@ -42,12 +42,12 @@ writeShellApplication {
       echo -n "Double tap reset and plug in$([ -n "$part" ] && echo " the '$part' part of") the keyboard via USB"
       while ! device="$(available)"; do
         echo -n .
-        sleep 3
+        sleep 1
       done
       echo
       echo "Found device at $device"
 
-      echo "We will now attempt to mount the device automatically using udisks every 3 seconds."
+      echo "We will now attempt to mount the device automatically using udisks every second."
       echo "Please either ensure that udisks is running or, alternatively, mount the device manually anywhere you prefer."
       echo -n "Waiting for mount "
 
@@ -58,7 +58,7 @@ writeShellApplication {
         # by udisks which would require the user to intervene manually in any
         # case.
         udisksctl mount --block-device "$device" >/dev/null 2>&1 || echo -n .
-        sleep 3
+        sleep 1
       done
       echo
 
