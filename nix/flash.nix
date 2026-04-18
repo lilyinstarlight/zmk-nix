@@ -42,20 +42,27 @@ writeShellApplication {
       echo -n "Double tap reset and plug in$([ -n "$part" ] && echo " the '$part' part of") the keyboard via USB"
       while ! device="$(available)"; do
         echo -n .
-        sleep 3
+        sleep 1
+      done
+      echo
+      echo "Found device at $device"
+
+      echo "We will now attempt to mount the device automatically using udisks every second."
+      echo "Please either ensure that udisks is running or, alternatively, mount the device manually anywhere you prefer."
+      echo -n "Waiting for mount "
+
+      while ! mountpoint="$(mounted)"; do
+        # Try to mount via udisks. If it works, we're good and the mountpoint
+        # should be found in the next step. If not, it's either been auto-mounted
+        # before we could which would also work out fine or it cannot be mounted
+        # by udisks which would require the user to intervene manually in any
+        # case.
+        udisksctl mount --block-device "$device" >/dev/null 2>&1 && continue || echo -n .
+        sleep 1
       done
       echo
 
-      sleep 1
-
-      if ! mountpoint="$(mounted)"; then
-        echo -n "Please mount the mass storage device at $device so that the firmware file can be copied"
-        while ! mountpoint="$(mounted)"; do
-          echo -n .
-          sleep 3
-        done
-      fi
-      echo
+      echo "Found mountpoint at $mountpoint"
 
       cp ${firmware}/*"$([ -n "$part" ] && echo "_$part")".uf2 "$mountpoint"
 
