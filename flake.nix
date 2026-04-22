@@ -33,7 +33,7 @@
 
     nixosModules = {
       udevRules = ({pkgs, ...}: {
-        services.udev.packages = [ self.packages.${pkgs.system}.uf2-udev-rules ];
+        services.udev.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.uf2-udev-rules ];
       });
     };
 
