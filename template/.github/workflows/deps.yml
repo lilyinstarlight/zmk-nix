@@ -20,12 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v12
+      - uses: NixOS/nix-installer-action@main
 
       - run: nix -vL run --show-trace .#update
 
       - id: create-pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: update_zmk_config_deps
           delete-branch: true

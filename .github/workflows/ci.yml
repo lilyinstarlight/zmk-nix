@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: NixOS/nix-installer-action@main
 
       - run: nix -vL --show-trace flake check
 
