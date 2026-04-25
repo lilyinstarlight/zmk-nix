@@ -22,11 +22,46 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v14
 
+      - name: Update Zephyr branch from ZMK
+        run: |
+          zmk_branch="$(sed -z -e 's/.*- *name: zmk\n *remote: zmkfirmware\n *revision: \([^\n]*\)\n.*/\1/' config/west.yml | cut -d'#' -f2 | tr -d ' ')"
+          zephyr_branch="$(curl -sSfL https://github.com/zmkfirmware/zmk/raw/refs/heads/${zmk_branch:-main}/app/west.yml | sed -z -e 's/.*- *name: zephyr\n *remote: zmkfirmware\n *revision: \([^\n]*\)\n.*/\1/')"
+          sed -zi \
+            -e "s/\(- *name: zephyr\n *remote: zmkfirmware\n *revision: [0-9a-f]* *#\) [^\n]*\n/\1 $zephyr_branch\n/" \
+            config/west.yml
+
       - run: nix -vL run --show-trace .#update
 
-      - run: cp config/west.yml template/config/west.yml
+      - name: Instantiate flake template
+        run: |
+          mkdir ../zmk-config
+          cd ../zmk-config
+          git init
+          nix flake init --template ../zmk-nix
+          nix flake lock
+          git add .
 
-      - run: sed -i -e 's|zephyrDepsHash\s*=\s*"[^"]*";|'"$(grep -o 'zephyrDepsHash\s*=\s*"[^"]*";' nix/firmware.nix)"'|' template/flake.nix
+      - name: Update ZMK and Zephyr branches
+        run: |
+          zmk_branch="$(git ls-remote --refs https://github.com/zmkfirmware/zmk.git 'refs/tags/*' | cut -d/ -f3 | sort -rV | head -n1 | cut -d. -f1-2)-branch"
+          zephyr_branch="$(curl -sSfL "https://github.com/zmkfirmware/zmk/raw/refs/heads/$zmk_branch/app/west.yml" | sed -z -e 's/.*- *name: zephyr\n *remote: zmkfirmware\n *revision: \([^\n]*\)\n.*/\1/')"
+          sed -zi \
+            -e "s/\(- *name: zmk\n *remote: zmkfirmware\n *revision: [0-9a-f]* *#\) [^\n]*\n/\1 $zmk_branch\n/" \
+            -e "s/\(- *name: zephyr\n *remote: zmkfirmware\n *revision: [0-9a-f]* *#\) [^\n]*\n/\1 $zephyr_branch\n/" \
+            config/west.yml
+
+      - run: nix -vL run --show-trace .#update
+
+      - name: Copy updated files to template directory in original checkout
+        run: |
+          (
+            IFS=$'\n'
+            for file in $(git ls-files -m); do
+              cp "$file" ../zmk-nix/template/"$file"
+            done
+          )
+          cd ../zmk-nix
+          rm -rf ../zmk-config
 
       - id: create-pr
         uses: peter-evans/create-pull-request@v7

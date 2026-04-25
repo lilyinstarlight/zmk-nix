@@ -24,3 +24,16 @@ jobs:
         with:
           name: zmk_firmware
           path: result
+
+      - name: Instantiate flake template
+        run: |
+          mkdir ../zmk-config
+          cd ../zmk-config
+          git init
+          nix flake init --template ../zmk-nix
+          nix flake lock
+          git add .
+
+      - run: nix -vL --show-trace flake check
+
+      - run: nix -vL --show-trace build --no-link
