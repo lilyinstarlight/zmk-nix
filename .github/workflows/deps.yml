@@ -49,18 +49,21 @@ jobs:
             -e "s/\(- *name: zmk\n *remote: zmkfirmware\n *revision: [0-9a-f]* *#\) [^\n]*\n/\1 $zmk_branch\n/" \
             -e "s/\(- *name: zephyr\n *remote: zmkfirmware\n *revision: [0-9a-f]* *#\) [^\n]*\n/\1 $zephyr_branch\n/" \
             config/west.yml
+        working-directory: ../zmk-config
 
       - run: nix -vL run --show-trace .#update
+        working-directory: ../zmk-config
 
       - name: Copy updated files to template directory in original checkout
         run: |
           (
+            cd ../zmk-config
+
             IFS=$'\n'
             for file in $(git ls-files -m); do
               cp "$file" ../zmk-nix/template/"$file"
             done
           )
-          cd ../zmk-nix
           rm -rf ../zmk-config
 
       - id: create-pr

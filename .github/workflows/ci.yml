@@ -35,5 +35,7 @@ jobs:
           git add .
 
       - run: nix -vL --show-trace flake check
+        working-directory: ../zmk-config
 
       - run: nix -vL --show-trace build --no-link
+        working-directory: ../zmk-config
