@@ -12,7 +12,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: NixOS/nix-installer-action@main
 
@@ -20,7 +20,7 @@ jobs:
 
       - run: nix -vL --show-trace build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: zmk_firmware
           path: result
