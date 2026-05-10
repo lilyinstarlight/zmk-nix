@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: MIT
+
+SUBSYSTEM!="block", GOTO="uf2_block_end"
+# UF2 bootloaders are always USB devices
+ENV{ID_BUS}!="usb", GOTO="uf2_block_end"
+
+# The write target always has a vfat filesystem.
+# Some devices, such as Nice!Nano, have no partition and just a block device
+# Other devices, such as RP2040's, have a partition that should be the target instead
+ENV{ID_FS_TYPE}!="vfat", GOTO="uf2_block_end"
+ENV{ID_FS_USAGE}!="filesystem", GOTO="uf2_block_end"
+
+#### DEVICE BOOTLOADERS
+
+# Nice!Nano Bootloader
+ENV{ID_VENDOR}=="Adafruit", ENV{ID_MODEL}=="nRF_UF2", GOTO="permissive_uf2_bootloader"
+
+# RP2 (RP2040, RPiPico, SparkFun Pro Micro RP2040, etc)
+ENV{ID_VENDOR}=="RPI", ENV{ID_MODEL}=="RP2", GOTO="permissive_uf2_bootloader"
+
+#### END DEVICE BOOTLOADERS
+
+# No device matched, jump to the end to prevent assignments to these unrelated devices.
+GOTO="uf2_block_end"
+
+LABEL="permissive_uf2_bootloader"
+# Symlink provides a very well known location to look for flashable devices.
+SYMLINK="mapper/uf2_bootloader_$env{ID_SERIAL_SHORT}"
+# Yes, other r/w.  The hardware has to be put into bootloader mode via physical interaction
+# so it's probably fine.
+MODE="0666"
+
+LABEL="uf2_block_end"
