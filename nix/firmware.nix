@@ -11,7 +11,7 @@ buildSplitKeyboard {
   board = "nice_nano@2.0.0//zmk";
   shield = "sofle_%PART% nice_view_adapter nice_view";
 
-  zephyrDepsHash = "sha256-lGjFEg5K+YRrJmnC9vLyyj46jWR3ys40ohzUT4G63G8=";
+  zephyrDepsHash = "sha256-l9QqtMmuIsj2QpH/iN3pG6CFY0uMg83UUA6C3B1Zvic=";
 
   meta = with lib; {
     description = "Keyboard firmware for Sofle RGB with nice!view screens";
