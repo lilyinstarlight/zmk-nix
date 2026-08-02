@@ -1,65 +1,72 @@
 { lib
 , buildZephyrPackage
-, runCommand
 , protobuf
 , python3
 }:
 
-{ board
-, shield ? null
-, snippets ? []
-, src
-, zephyrDepsHash
-, name ? "zmk"
-, config ? "config"
-, extraWestBuildFlags ? []
-, extraCmakeFlags ? []
-, enableZmkStudio ? false
-, ... } @ args: (buildZephyrPackage.override { inherit python3; }) ((lib.removeAttrs args [ "config" "enableZmkStudio" "extraWestBuildFlags" "extraCmakeFlags" ]) // {
-  inherit name;
+lib.extendMkDerivation {
+  constructDrv = buildZephyrPackage.override { inherit python3; };
+  
+  excludeDrvArgNames = [ "config" "enableZmkStudio" "extraWestBuildFlags" "extraCmakeFlags" ];
 
-  nativeBuildInputs = lib.optionals enableZmkStudio [
-    protobuf
-    python3.pythonOnBuildForHost.pkgs.protobuf
-    python3.pythonOnBuildForHost.pkgs.grpcio-tools
-  ] ++ (args.nativeBuildInputs or []);
+  extendDrvArgs =
+    finalAttrs:
+    { board
+    , shield ? null
+    , snippets ? []
+    , name ? "zmk"
+    , config ? "config"
+    , extraWestBuildFlags ? []
+    , extraCmakeFlags ? []
+    , enableZmkStudio ? false
+    , ... } @ args: 
+    {
+      inherit name;
 
-  westRoot = config;
+      nativeBuildInputs = lib.optionals enableZmkStudio [
+        protobuf
+        python3.pythonOnBuildForHost.pkgs.protobuf
+        python3.pythonOnBuildForHost.pkgs.grpcio-tools
+      ] ++ (args.nativeBuildInputs or []);
 
-  westBuildFlags = [
-    "-s" "zmk/app"
-    "-b" board
-  ] ++ lib.optionals enableZmkStudio [ "-S" "studio-rpc-usb-uart" ]
-    ++ lib.concatMap (snippet: [ "-S" snippet ]) snippets
-    ++ extraWestBuildFlags ++ [
-    "--"
-  ] ++ lib.optional (shield != null) "-DSHIELD=${shield}"
-    ++ lib.optional enableZmkStudio "-DCONFIG_ZMK_STUDIO=y"
-    ++ extraCmakeFlags;
-  postPatch = ''
-    if [ -e zephyr/module.yml ]; then
-      zmkModuleRoot="$(readlink -f .)"
+      westRoot = config;
 
-      cd "$(mktemp -d)"
-      mkdir -p "$(dirname ${lib.escapeShellArg config})"
-      cp --no-preserve=mode -rt "$(dirname ${lib.escapeShellArg config})" "$zmkModuleRoot/"${lib.escapeShellArg config}
-    fi
-  '' + (args.postPatch or "");
+      westBuildFlags = [
+        "-s" "zmk/app"
+        "-b" board
+      ] ++ lib.optionals enableZmkStudio [ "-S" "studio-rpc-usb-uart" ]
+        ++ lib.concatMap (snippet: [ "-S" snippet ]) snippets
+        ++ extraWestBuildFlags ++ [
+        "--"
+      ] ++ lib.optional (shield != null) "-DSHIELD=${shield}"
+        ++ lib.optional enableZmkStudio "-DCONFIG_ZMK_STUDIO=y"
+        ++ extraCmakeFlags;
 
-  preConfigure = ''
-    westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
+      postPatch = ''
+        if [ -e zephyr/module.yml ]; then
+          zmkModuleRoot="$(readlink -f .)"
 
-    if [ -n "$zmkModuleRoot" ]; then
-      westBuildFlagsArray+=("-DZMK_EXTRA_MODULES=$zmkModuleRoot")
-    elif [ -e boards ]; then
-      westBuildFlagsArray+=("-DBOARD_ROOT=$(readlink -f .)")
-    fi
-  '' + (args.preConfigure or "");
+          cd "$(mktemp -d)"
+          mkdir -p "$(dirname ${lib.escapeShellArg config})"
+          cp --no-preserve=mode -rt "$(dirname ${lib.escapeShellArg config})" "$zmkModuleRoot/"${lib.escapeShellArg config}
+        fi
+      '' + (args.postPatch or "");
 
-  postConfigure = ''
-    if [ -d ../modules/lib/nanopb/generator ]; then
-      chmod +x ../modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
-      patchShebangs ../modules/lib/nanopb/generator
-    fi
-  '' + (args.postConfigure or "");
-})
+      preConfigure = ''
+        westBuildFlagsArray+=("-DZMK_CONFIG=$(readlink -f ${lib.escapeShellArg config})")
+
+        if [ -n "$zmkModuleRoot" ]; then
+          westBuildFlagsArray+=("-DZMK_EXTRA_MODULES=$zmkModuleRoot")
+        elif [ -e boards ]; then
+          westBuildFlagsArray+=("-DBOARD_ROOT=$(readlink -f .)")
+        fi
+      '' + (args.preConfigure or "");
+
+      postConfigure = ''
+        if [ -d ../modules/lib/nanopb/generator ]; then
+          chmod +x ../modules/lib/nanopb/generator/{nanopb_generator,protoc,protoc-gen-nanopb}
+          patchShebangs ../modules/lib/nanopb/generator
+        fi
+      '' + (args.postConfigure or "");
+    };
+}
