@@ -11,6 +11,8 @@
     packages = forAllSystems (system: let pkgs = nixpkgs.legacyPackages.${system}; in rec {
       default = firmware;
 
+      adafruit-nrfutil = pkgs.callPackage ./nix/adafruit-nrfutil.nix {};
+
       firmware = pkgs.callPackage ./nix/firmware.nix {
         inherit self;
         inherit (self.legacyPackages.${system}) buildSplitKeyboard;
@@ -18,6 +20,10 @@
 
       flash = pkgs.callPackage ./nix/flash.nix {
         inherit firmware;
+      };
+
+      flash-nicenano-dfu = pkgs.callPackage ./nix/flash-nicenano-dfu.nix {
+        inherit firmware adafruit-nrfutil;
       };
 
       update = pkgs.callPackage ./nix/update.nix {};
@@ -53,6 +59,10 @@
           - Run `nix run .#update` to update West dependencies, including ZMK version, and bump the `zephyrDepsHash` on the derivation
           - GitHub Actions to automatically PR flake lockfile bumps and West dependency bumps are included
           - Using something like Mergify to automatically merge these PRs is recommended - see <https://github.com/lilyinstarlight/zmk-nix/blob/main/.github/mergify.yml> for an example Mergify configuration
+
+          ## Alternative flash methods
+
+          - nice-nano via DFU over serial: change flash to flash = zmk-nix.packages.''${system}.flash-nicenano-dfu.override { inherit firmware; };
         '';
       };
     };
