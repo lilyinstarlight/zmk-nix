@@ -74,6 +74,7 @@
 
     mkdir $out
     cp */*.uf2 $out/
+    cp */*.hex $out/
 
     runHook postInstall
   '';
