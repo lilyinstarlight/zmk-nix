@@ -8,73 +8,82 @@
 , python3
 }:
 
-{
-  zephyrDepsHash ? "",
-  westBuildFlags ? [],
-  ...
-} @ args: stdenv.mkDerivation (finalAttrs: (lib.removeAttrs args [ "zephyrDepsHash" "westRoot" ]) // {
-  inherit westBuildFlags;
+lib.extendMkDerivation {
+  constructDrv = stdenv.mkDerivation;
 
-  nativeBuildInputs = [
-    cmake
-    git
-    ninja
-    python3.pythonOnBuildForHost.pkgs.west
-    python3.pythonOnBuildForHost.pkgs.pyelftools
-  ] ++ (args.nativeBuildInputs or []);
+  excludeDrvArgNames = [ "zephyrDepsHash" "westRoot" ];
 
-  westDeps = args.westDeps or (fetchZephyrDeps ({
-    name = "${finalAttrs.finalPackage.name}-west-deps";
-    hash = zephyrDepsHash;
-  }
-  // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" ]) args)
-  // (lib.filterAttrs (name: _: lib.elem name [ "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs)));
+  extendDrvArgs =
+    finalAttrs:
+    {
+      zephyrDepsHash ? "",
+      westBuildFlags ? [],
+      ...
+    } @ args:
+    {
+      inherit westBuildFlags;
 
-  inherit (finalAttrs.westDeps) westRoot;
+      nativeBuildInputs = [
+        cmake
+        git
+        ninja
+        python3.pythonOnBuildForHost.pkgs.west
+        python3.pythonOnBuildForHost.pkgs.pyelftools
+      ] ++ (args.nativeBuildInputs or []);
 
-  env = {
-    ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
-    GNUARMEMB_TOOLCHAIN_PATH = gcc-arm-embedded;
-  } // (args.env or {});
+      westDeps = args.westDeps or (fetchZephyrDeps ({
+        name = "${finalAttrs.finalPackage.name}-west-deps";
+        hash = zephyrDepsHash;
+      }
+      // (lib.filterAttrs (name: _: lib.elem name [ "westRoot" ]) args)
+      // (lib.filterAttrs (name: _: lib.elem name [ "src" "srcs" "sourceRoot" "prePatch" "patches" "postPatch" ]) finalAttrs)));
 
-  configurePhase = args.configurePhase or ''
-    declare -ag westBuildFlagsArray=(${lib.escapeShellArgs finalAttrs.westBuildFlags})
+      inherit (finalAttrs.westDeps) westRoot;
 
-    runHook preConfigure
+      env = {
+        ZEPHYR_TOOLCHAIN_VARIANT = "gnuarmemb";
+        GNUARMEMB_TOOLCHAIN_PATH = gcc-arm-embedded;
+      } // (args.env or {});
 
-    cp --no-preserve=mode -rt . "$westDeps"/*
+      configurePhase = args.configurePhase or ''
+        declare -ag westBuildFlagsArray=(${lib.escapeShellArgs finalAttrs.westBuildFlags})
 
-    mkdir -p .west
-    cat >.west/config <<EOF
-    [manifest]
-    path = $westRoot
-    file = west.yml
-    EOF
+        runHook preConfigure
 
-    if zephyrRoot="$(dirname "$(dirname "$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -printf '%h' -quit)")")"; then
-      addCMakeParams "$zephyrRoot"
+        cp --no-preserve=mode -rt . "$westDeps"/*
 
-      if [ -z "$dontAddZephyrVersion" ]; then
-        if (for item in "''${westBuildFlagsArray[@]}"; do [ "$item" = '--' ] && exit 1; done); then
-          westBuildFlagsArray+=('--')
+        mkdir -p .west
+        cat >.west/config <<EOF
+        [manifest]
+        path = $westRoot
+        file = west.yml
+        EOF
+
+        if zephyrRoot="$(dirname "$(dirname "$(find "$(pwd)" -path '*/share/zephyr-package/cmake' -printf '%h' -quit)")")"; then
+          addCMakeParams "$zephyrRoot"
+
+          if [ -z "$dontAddZephyrVersion" ]; then
+            if (for item in "''${westBuildFlagsArray[@]}"; do [ "$item" = '--' ] && exit 1; done); then
+              westBuildFlagsArray+=('--')
+            fi
+            westBuildFlagsArray+=("-DBUILD_VERSION=$(<"$zephyrRoot"/.git/HEAD)")
+          fi
         fi
-        westBuildFlagsArray+=("-DBUILD_VERSION=$(<"$zephyrRoot"/.git/HEAD)")
-      fi
-    fi
 
-    west build -d "''${cmakeBuildDir:=build}" --cmake-only "''${westBuildFlagsArray[@]}"
+        west build -d "''${cmakeBuildDir:=build}" --cmake-only "''${westBuildFlagsArray[@]}"
 
-    cd "$cmakeBuildDir"
+        cd "$cmakeBuildDir"
 
-    runHook postConfigure
-  '';
+        runHook postConfigure
+      '';
 
-  installPhase = args.installPhase or ''
-    runHook preInstall
+      installPhase = args.installPhase or ''
+        runHook preInstall
 
-    mkdir $out
-    cp */*.uf2 $out/
+        mkdir $out
+        cp */*.uf2 $out/
 
-    runHook postInstall
-  '';
-})
+        runHook postInstall
+      '';
+    };
+}
