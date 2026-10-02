@@ -76,8 +76,8 @@ The `buildKeyboard` function takes the following arguments and performs a ZMK bu
 
 The `buildSplitKeyboard` function takes the following arguments and outputs a directory with multiple `.uf2` files, one for each keyboard part:
 
-* `board` - ZMK board value
-* `shield` - ZMK shield value, the special string `%PART%` will be replaced in each `buildKeyboard` invocation to match the part being built for
+* `board` - ZMK board value, the special string `%PART%` will be replaced in each `buildKeyboard` invocation to match the part being built for (can also be an attribute set of the shape `{ part = "board"; }` (or `{ _ = "default_board"; }` for default when part not otherwise included, or a function of the shape `part: "board"`)
+* `shield` - ZMK shield value, the special string `%PART%` will be replaced in each `buildKeyboard` invocation to match the part being built for (can be null for no shields) (can also be an attribute set of the shape `{ part = "shield"; }` (or `{ _ = "default_shield"; }` for default when part not otherwise included, or a function of the shape `part: "shield"`)
 * `snippets` - ZMK snippets to include (should not include `studio-rpc-usb-uart` since that should be enabled via `enableZmkStudio`)
 * `parts` - enumeration of parts to the keyboard that matches the shield naming, defaults to `[ "left" "right" ]`
 * `centralPart` - part of split keyboard to have "central" role (only used to determine which part to pass through `enableZmkStudio` for), defaults to the first element of `parts` (generally should not need to be set)
