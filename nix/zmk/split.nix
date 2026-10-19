@@ -39,5 +39,6 @@ in runCommand name ((lib.removeAttrs args [ "name" "board" "shield" "parts" "cen
   mkdir $out
   for part in $parts; do
     ln -s ''${!part}/zmk.uf2 $out/zmk_"$part".uf2
+    ln -s ''${!part}/zmk.hex $out/zmk_"$part".hex
   done
 ''
